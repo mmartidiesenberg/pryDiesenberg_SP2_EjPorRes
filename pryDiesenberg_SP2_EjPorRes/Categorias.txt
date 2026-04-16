@@ -1,0 +1,15 @@
+1;Procesadores
+2;Disco Rígido
+3;Memorias RAM
+4;Discos SSD
+5;Discos HDD
+6;Tarjetas Gráficas
+7;Fuentes de Poder
+8;Gabinetes
+9;Monitores
+10;Teclados
+11;Mouse
+12;Auriculares
+13;Impresoras
+14;Notebook
+15;Cables y Adaptadores
