@@ -49,7 +49,7 @@ namespace pryDiesenberg_SP2_EjPorRes
                 Mostrar("Migrando datos de Categorias...");
 
                 OleDbCommand borrar = new OleDbCommand(
-                "DELETE FROM Categorías", cn);
+                "DELETE FROM [Categorías]", cn);
                 borrar.ExecuteNonQuery();
 
                 int cont = 0;
@@ -62,7 +62,7 @@ namespace pryDiesenberg_SP2_EjPorRes
                     string[] datos = linea.Split(';');
 
                     OleDbCommand cmd = new OleDbCommand(
-                    "INSERT INTO Categorías VALUES (@id,@nom)", cn);
+                    "INSERT INTO [Categorías] ([IdCategoría], [Nombre]) VALUES (@id,@nom)", cn);
 
                     cmd.Parameters.AddWithValue("@id", datos[0]);
                     cmd.Parameters.AddWithValue("@nom", datos[1]);
@@ -89,7 +89,7 @@ namespace pryDiesenberg_SP2_EjPorRes
                 Mostrar("Migrando datos de Artículos...");
 
                 OleDbCommand borrar = new OleDbCommand(
-                "DELETE FROM Articulos", cn);
+                "DELETE FROM [Artículos]", cn);
                 borrar.ExecuteNonQuery();
 
                 int cont = 0;
@@ -102,7 +102,7 @@ namespace pryDiesenberg_SP2_EjPorRes
                     string[] datos = linea.Split(';');
 
                     OleDbCommand cmd = new OleDbCommand(
-                    "INSERT INTO Artículos VALUES (@id,@nom,@cat,@pre)", cn);
+                    "INSERT INTO [Artículos] ([IdArtículo], [Nombre], [IdCategoría], [Precio]) VALUES (@id,@nom,@cat,@pre)", cn);
 
                     cmd.Parameters.AddWithValue("@id", datos[0]);
                     cmd.Parameters.AddWithValue("@nom", datos[1]);
@@ -110,7 +110,6 @@ namespace pryDiesenberg_SP2_EjPorRes
                     cmd.Parameters.AddWithValue("@pre", datos[3]);
 
                     cmd.ExecuteNonQuery();
-
                     cont++;
                 }
 
