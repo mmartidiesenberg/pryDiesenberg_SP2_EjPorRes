@@ -74,6 +74,7 @@
             this.Name = "frmMigracion";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Migración de Datos";
+            this.Load += new System.EventHandler(this.frmMigracion_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

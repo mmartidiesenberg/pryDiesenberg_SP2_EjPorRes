@@ -23,10 +23,17 @@ namespace pryDiesenberg_SP2_EjPorRes
         {
             try
             {
+                if (!File.Exists(ruta))
+                {
+                    Mostrar("ERROR: Base de datos no encontrada en: " + ruta);
+                    return false;
+                }
+
                 cn = new OleDbConnection(
                 @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + ruta);
 
                 cn.Open();
+                Mostrar("Conectado a la base de datos.");
                 return true;
             }
             catch (Exception ex)
@@ -38,15 +45,34 @@ namespace pryDiesenberg_SP2_EjPorRes
 
         public void Cerrar()
         {
-            if (cn != null)
-                cn.Close();
+            try
+            {
+                if (cn != null && cn.State == System.Data.ConnectionState.Open)
+                {
+                    cn.Close();
+                    cn.Dispose();
+                    Mostrar("Conexión cerrada.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Mostrar("ERROR al cerrar: " + ex.Message);
+            }
         }
 
         public void MigrarCategorias(string rutaTxt)
         {
+            StreamReader sr = null;
+
             try
             {
-                Mostrar("Migrando datos de Categorias...");
+                if (!File.Exists(rutaTxt))
+                {
+                    Mostrar("ERROR Categorías: No se pudo encontrar el archivo " + rutaTxt);
+                    return;
+                }
+
+                Mostrar("Migrando datos de Categorías...");
 
                 OleDbCommand borrar = new OleDbCommand(
                 "DELETE FROM [Categorías]", cn);
@@ -54,38 +80,70 @@ namespace pryDiesenberg_SP2_EjPorRes
 
                 int cont = 0;
 
-                StreamReader sr = new StreamReader(rutaTxt);
+                sr = new StreamReader(rutaTxt, Encoding.UTF8);
 
                 while (!sr.EndOfStream)
                 {
                     string linea = sr.ReadLine();
+
+                    if (string.IsNullOrWhiteSpace(linea))
+                        continue;
+
                     string[] datos = linea.Split(';');
 
-                    OleDbCommand cmd = new OleDbCommand(
-                    "INSERT INTO [Categorías] ([IdCategoría], [Nombre]) VALUES (@id,@nom)", cn);
+                    if (datos.Length < 2)
+                    {
+                        Mostrar("ADVERTENCIA: Línea con formato incorrecto.");
+                        continue;
+                    }
 
-                    cmd.Parameters.AddWithValue("@id", datos[0]);
-                    cmd.Parameters.AddWithValue("@nom", datos[1]);
+                    try
+                    {
+                        OleDbCommand cmd = new OleDbCommand(
+                        "INSERT INTO [Categorías] ([IdCategoría], [Nombre]) VALUES (@id,@nom)", cn);
 
-                    cmd.ExecuteNonQuery();
-                    cont++;
+                        cmd.Parameters.AddWithValue("@id", int.Parse(datos[0].Trim()));
+                        cmd.Parameters.AddWithValue("@nom", datos[1].Trim());
+
+                        cmd.ExecuteNonQuery();
+                        cmd.Dispose();
+                        cont++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Mostrar("ERROR en línea: " + linea + " - " + ex.Message);
+                    }
                 }
-
-                sr.Close();
 
                 Mostrar("Se incorporaron " + cont + " registros nuevos.");
                 Mostrar("");
             }
             catch (Exception ex)
             {
-                Mostrar("ERROR Categorias: " + ex.Message);
+                Mostrar("ERROR Categorías: " + ex.Message);
+            }
+            finally
+            {
+                if (sr != null)
+                {
+                    sr.Close();
+                    sr.Dispose();
+                }
             }
         }
 
         public void MigrarArticulos(string rutaTxt)
         {
+            StreamReader sr = null;
+
             try
             {
+                if (!File.Exists(rutaTxt))
+                {
+                    Mostrar("ERROR Artículos: No se pudo encontrar el archivo " + rutaTxt);
+                    return;
+                }
+
                 Mostrar("Migrando datos de Artículos...");
 
                 OleDbCommand borrar = new OleDbCommand(
@@ -94,33 +152,57 @@ namespace pryDiesenberg_SP2_EjPorRes
 
                 int cont = 0;
 
-                StreamReader sr = new StreamReader(rutaTxt);
+                sr = new StreamReader(rutaTxt, Encoding.UTF8);
 
                 while (!sr.EndOfStream)
                 {
                     string linea = sr.ReadLine();
+
+                    if (string.IsNullOrWhiteSpace(linea))
+                        continue;
+
                     string[] datos = linea.Split(';');
 
-                    OleDbCommand cmd = new OleDbCommand(
-                    "INSERT INTO [Artículos] ([IdArtículo], [Nombre], [IdCategoría], [Precio]) VALUES (@id,@nom,@cat,@pre)", cn);
+                    if (datos.Length < 4)
+                    {
+                        Mostrar("ADVERTENCIA: Línea con formato incorrecto.");
+                        continue;
+                    }
 
-                    cmd.Parameters.AddWithValue("@id", datos[0]);
-                    cmd.Parameters.AddWithValue("@nom", datos[1]);
-                    cmd.Parameters.AddWithValue("@cat", datos[2]);
-                    cmd.Parameters.AddWithValue("@pre", datos[3]);
+                    try
+                    {
+                        OleDbCommand cmd = new OleDbCommand(
+                        "INSERT INTO [Artículos] ([IdArtículo], [Nombre], [IdCategoría], [Precio]) VALUES (@id,@nom,@cat,@pre)", cn);
 
-                    cmd.ExecuteNonQuery();
-                    cont++;
+                        cmd.Parameters.AddWithValue("@id", int.Parse(datos[0].Trim()));
+                        cmd.Parameters.AddWithValue("@nom", datos[1].Trim());
+                        cmd.Parameters.AddWithValue("@cat", int.Parse(datos[2].Trim()));
+                        cmd.Parameters.AddWithValue("@pre", decimal.Parse(datos[3].Trim()));
+
+                        cmd.ExecuteNonQuery();
+                        cmd.Dispose();
+                        cont++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Mostrar("ERROR en línea: " + linea + " - " + ex.Message);
+                    }
                 }
-
-                sr.Close();
 
                 Mostrar("Se incorporaron " + cont + " registros nuevos.");
                 Mostrar("");
             }
             catch (Exception ex)
             {
-                Mostrar("ERROR Articulos: " + ex.Message);
+                Mostrar("ERROR Artículos: " + ex.Message);
+            }
+            finally
+            {
+                if (sr != null)
+                {
+                    sr.Close();
+                    sr.Dispose();
+                }
             }
         }
     }
