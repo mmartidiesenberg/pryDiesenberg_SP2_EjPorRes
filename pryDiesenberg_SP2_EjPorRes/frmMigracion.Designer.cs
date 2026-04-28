@@ -67,7 +67,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(323, 233);
+            this.BackColor = System.Drawing.Color.OldLace;
+            this.ClientSize = new System.Drawing.Size(323, 222);
             this.Controls.Add(this.lblInformacion);
             this.Controls.Add(this.txtInformacion);
             this.Controls.Add(this.btnIniciar);
