@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+//
 namespace pryDiesenberg_SP2_EjPorRes
 {
     public partial class frmMigracion : Form
